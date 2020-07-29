@@ -1,0 +1,119 @@
+* {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+html {
+    background-color: red;
+}
+body {
+    width: 96vw;
+    height: 96vh;
+    margin-top: 2vh;
+    margin-left: 2vw;
+    background-color: white;
+    border-radius: 20px;
+}
+.btn_manage {
+    position: fixed;
+    bottom: 2vh;
+    border-radius: 20px;
+    height: 10vh;
+    width: 10vh;
+}
+#btn_task_list {
+    left: 2vw;
+}
+#btn_new_task {
+    right: 2vw;
+}
+
+.task {
+    list-style: none;
+    display: flex;
+    border-radius: 20px;
+    padding: 20px;
+    background-color: grey;
+    margin-top: 10px;
+}
+.task>p {
+    flex: 5;
+}
+.task>button {
+    flex: 1;
+}
+
+.task_manager {
+    position: relative;
+    list-style: none;
+    display: flex;
+    border-radius: 20px;
+    height: 15vh;
+    background-color: grey;
+    margin-top: 10px;
+}
+.btn_erase_task {
+    position: absolute;
+    height: 50%;
+    width: 5vw;
+    top: 25%;
+    left: 0;
+}
+.task_manager>p {
+    flex: 2;
+    margin: auto;
+}
+.task_manager>div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.task_manager>div>* {
+    flex: auto;
+}
+.value_modifier {
+    display: flex;
+    flex-direction: row;
+}
+.value_modifier>button {
+    flex: auto;
+}
+
+#new_task {
+    display: flex;
+    flex-direction: column;
+    display: none;
+}
+#new_task_title {
+    line-height: 10vh;
+}
+.new_task_parameter {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10vh;
+}
+.new_task_parameter>p {
+    flex: 1;
+    /* text-align: right; */
+}
+.new_task_parameter>div {
+    flex: 1;
+    /* text-align: left; */
+}
+.new_task_data {
+    display: flex;
+    flex-direction: column;
+}
+.new_task_data>div {
+    display: flex;
+    flex-direction: row;
+}
+.new_task_data>div>button {
+    flex: auto;
+}
+#new_task_validation {
+    width: 50vw;
+    height: 5vh;
+    margin: auto;
+    margin-top: 5vh;
+}

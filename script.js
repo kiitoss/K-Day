@@ -2,14 +2,51 @@ var actualDate = new Date();
 var day = actualDate.getDay();
 var month = actualDate.getMonth() + 1;
 var year = actualDate.getFullYear();
-console.log(day+"-"+month+"-"+year);
+var now_date = [Number(day), Number(month), Number(year)];
+now_date = JSON.parse(JSON.stringify(now_date));
+
+var max_date = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 // localStorage.clear();
 
-task_list = JSON.parse(localStorage.getItem('task_list'));
+
+var task_list = JSON.parse(localStorage.getItem('task_list'));
 if (task_list == null) {
     task_list = [];
 }
+
+var old_date = JSON.parse(localStorage.getItem("old_date"));
+if (old_date == null) {
+    old_date = [Number(day), Number(month), Number(year)];
+    localStorage.setItem('old_date', JSON.stringify(old_date));
+}
+
+function adapt_date() {
+    let security = 365;
+
+    while (old_date != now_date) {
+        if (old_date[0] == now_date[0] && old_date[1] == now_date[1] && old_date[2] == now_date[2]) {
+            return;
+        }
+        if (security < 0) {
+            old_date = now_date;
+            console.log("Security exit loop");
+            break;
+        }
+        security--;
+        old_date[0]++;
+        if (old_date[0] > max_date[old_date[1]-1]) {
+            old_date[0] = 1;
+            old_date[1]++;
+            if (old_date[1] > 12) {
+                old_date[2]++;
+                old_date[1] = 1;
+            }
+        }
+        new_day(false);
+    }
+}
+
 
 function Task(title, frequency, begining) {
     this.title = title;
@@ -17,7 +54,22 @@ function Task(title, frequency, begining) {
     this.begining = begining;
 }
 
+function new_day(show=true) {
+    for (let i=0; i<task_list.length; i++) {
+        task_list[i].begining--;
+        if (task_list[i].begining < 0) {
+            task_list[i].begining += task_list[i].frequency;
+        }
+    }
+    if (show) {
+        show_to_do_list();
+    }
+}
+
 function show_task_to_do(task) {
+    if (task.begining > 0) {
+        return;
+    }
     let new_task = document.createElement("li");
     new_task.setAttribute("class", "task");
     let task_title = document.createElement("p");
@@ -44,6 +96,22 @@ function show_task_to_do(task) {
 function show_task_manager(task) {
     let new_task = document.createElement("li");
     new_task.setAttribute("class", "task_manager");
+
+    let btn_erase = document.createElement("button");
+    btn_erase.setAttribute("class", "btn_erase_task");
+    btn_erase.innerHTML = "x";
+    btn_erase.onclick = function() {
+        for (let i=0; i<task_list.length; i++) {
+            if (task_list[i] == task) {
+                task_list.splice(i,1);
+                localStorage.setItem('task_list', JSON.stringify(task_list));
+                show_task_list_manager();
+                break;
+            }
+        }
+    }
+    new_task.appendChild(btn_erase);
+
     let task_title = document.createElement("p");
     task_title.innerHTML = task.title;
     new_task.appendChild(task_title);
@@ -60,12 +128,12 @@ function show_task_manager(task) {
     let btn_less = document.createElement("button");
     btn_less.innerHTML = "-";
     btn_less.onclick = function() {
-        change_frequency_task(this, -1);
+        change_frequency_task(this, -1, 1, task);
     }
     let btn_more = document.createElement("button");
     btn_more.innerHTML = "+";
     btn_more.onclick = function() {
-        change_frequency_task(this, +1);
+        change_frequency_task(this, +1, 1, task);
     }
     btn_container.appendChild(btn_less);
     btn_container.appendChild(btn_more);
@@ -88,12 +156,12 @@ function show_task_manager(task) {
     btn_less = document.createElement("button");
     btn_less.innerHTML = "-";
     btn_less.onclick = function() {
-        change_begining_task(this, -1);
+        change_begining_task(this, -1, 1, task);
     }
     btn_more = document.createElement("button");
     btn_more.innerHTML = "+";
     btn_more.onclick = function() {
-        change_begining_task(this, +1);
+        change_begining_task(this, +1, 1, task);
     }
     btn_container.appendChild(btn_less);
     btn_container.appendChild(btn_more);
@@ -106,24 +174,30 @@ function show_task_manager(task) {
     document.getElementById("task_list").appendChild(new_task);
 }
 
-function change_frequency_task(elt, qte, place_child=1) {
-    let text = elt.parentNode.parentNode.children[place_child].innerHTML.split(" ");
-    let new_frequency = Number(text.pop()) - qte;
+function change_frequency_task(elt, qte, child_index, task=null) {
+    let text = elt.parentNode.parentNode.children[child_index].innerHTML.split(" ");
+    let new_frequency = Number(text.pop()) + qte;
     if (new_frequency < 1) {
         return;
     }
     let new_text = text.join(" ") + " " + String(new_frequency);
-    elt.parentNode.parentNode.children[place_child].innerHTML = new_text;
+    elt.parentNode.parentNode.children[child_index].innerHTML = new_text;
+    if (task != null) {
+        task.frequency = new_frequency;
+    }
 }
 
-function change_begining_task(elt, qte, place_child=1) {
-    let text = elt.parentNode.parentNode.children[place_child].innerHTML.split(" ");
+function change_begining_task(elt, qte, child_index, task=null) {
+    let text = elt.parentNode.parentNode.children[child_index].innerHTML.split(" ");
     let new_begining = Number(text.shift()) + qte;
     if (new_begining < 0) {
         return;
     }
     let new_text = String(new_begining) + " " + text.join(" ");
-    elt.parentNode.parentNode.children[place_child].innerHTML = new_text;
+    elt.parentNode.parentNode.children[child_index].innerHTML = new_text;
+    if (task != null) {
+        task.begining = new_begining;
+    }
 }
 
 function show_to_do_list() {
@@ -136,11 +210,7 @@ function show_to_do_list() {
     document.getElementById("btn_task_list").onclick = function() {
         show_task_list_manager();
     }
-    document.getElementById("btn_new_day").innerHTML = "Nouveau jour";
-
-    document.getElementById("btn_new_day").onclick = function() {
-
-    }
+    document.getElementById("btn_new_task").style.display = "none";
 }
 
 function show_task_list_manager() {
@@ -148,27 +218,20 @@ function show_task_list_manager() {
     for (let i=0; i<task_list.length; i++) {
         show_task_manager(task_list[i]);
     }
-    let btn_clear = document.createElement("button");
-    btn_clear.setAttribute("id", "btn_clear");
-    btn_clear.innerHTML = "clear";
-    btn_clear.onclick = function() {
-        localStorage.clear();
-        location.reload();
-    }
-    document.getElementById("task_list").appendChild(btn_clear);
-
 
     document.getElementById("btn_task_list").innerHTML = "Accueil";
     document.getElementById("btn_task_list").onclick = function() {
+        localStorage.setItem('task_list', JSON.stringify(task_list));
         show_to_do_list();
     }
-    document.getElementById("btn_new_day").innerHTML = "Nouvelle tâche";
-    document.getElementById("btn_new_day").onclick = function() {
+    document.getElementById("btn_new_task").style.display = "block";
+    document.getElementById("btn_new_task").innerHTML = "Nouvelle tâche";
+    document.getElementById("btn_new_task").onclick = function() {
         document.getElementById("task_list").innerHTML = "";
         document.getElementById("new_task").style.display = "flex";
         document.getElementById("new_task_title").value = "";
         document.getElementById("new_task_frequency").innerHTML = "1 jour sur 1";
-        document.getElementById("new_task_begining").innerHTML = "1 jour(s)";
+        document.getElementById("new_task_begining").innerHTML = "0 jour(s)";
     }
 }
 
@@ -190,6 +253,21 @@ function validation_new_task() {
 }
 
 
+function create_false_day() {
+    now_date[0]++;
+    if (now_date[0] > max_date[now_date[1]-1]) {
+        now_date[0] = 1;
+        now_date[1]++;
+        if (now_date[1] > 12) {
+            now_date[2]++;
+            now_date[1] = 1;
+        }
+    }
+    adapt_date();
+    show_to_do_list();
+}
 
 
+
+adapt_date();
 show_to_do_list();
