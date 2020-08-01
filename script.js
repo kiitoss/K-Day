@@ -5,6 +5,8 @@ var year = actualDate.getFullYear();
 var now_date = [Number(day), Number(month), Number(year)];
 now_date = JSON.parse(JSON.stringify(now_date));
 
+var first_opening = true;
+
 var max_date = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 // localStorage.clear();
@@ -69,7 +71,7 @@ function new_day(show=true) {
     }
 }
 
-function show_task_to_do(task) {
+function show_task_to_do(task, delay) {
     if (task.begining > 0) {
         return;
     }
@@ -90,15 +92,22 @@ function show_task_to_do(task) {
             task.isDone = true;
             this.parentNode.style.backgroundColor = "rgb(0, 186, 0)";
             this.style.backgroundColor = "rgb(255, 153, 0)";
-            this.innerHTML = "annuler";
+            this.innerHTML = "x";
         }
         localStorage.setItem('task_list', JSON.stringify(task_list));
         actualie_label_task_done();
     }
 
+    new_task.style.animationDuration = delay+"s";
+    new_task.style.animationName = "slidein";
+    // new_task.style.animationDuration = "1s";
+    // new_task.style.animationName = "slidein";
+
     new_task.appendChild(task_title);
     new_task.appendChild(task_button);
 
+    // new_task.style.animationDuration = delay+"s";
+    // new_task.style.animationName = "slidein";
     document.getElementById("task_list").appendChild(new_task);
 
     if (task.isDone) {
@@ -234,8 +243,18 @@ function show_to_do_list() {
     document.getElementById("new_task").style.display = "none";
     document.getElementById("task_list").innerHTML = "";
     for (let i=0; i<task_list.length; i++) {
-        show_task_to_do(task_list[i]);
+        if (!first_opening) {
+            show_task_to_do(task_list[i], 0);
+        }
+        else {
+            let delay = i;
+            if (i>5) {
+                delay = 5;
+            }
+            show_task_to_do(task_list[i], delay);
+        }
     }
+    first_opening = false;
     document.getElementById("nb_task_done").style.display = "block";
     document.getElementById("btn_task_list").style.backgroundImage = "url(img/parameters.png)";
     document.getElementById("btn_task_list").onclick = function() {
