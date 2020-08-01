@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K-Day</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dosis&family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="style.css">
     <script type="text/javascript" src="script.js" defer></script>
 </head>
 <body>
+    <h1 id="nb_task_done"></h1>
     <ul id="task_list">
     </ul>
     <section id="new_task">
@@ -34,7 +36,7 @@
         </div>
         <button id="new_task_validation" onclick="validation_new_task()">Valider</button>
     </section>
-    <button class="btn_manage" id="btn_task_list" onclick="show_task_list_manager()">Gestion des tâches</button>
-    <button class="btn_manage" id="btn_new_task">Nouvelle tâche</button>
+    <button class="btn_manage" id="btn_task_list" onclick="show_task_list_manager()"></button>
+    <button class="btn_manage" id="btn_new_task"></button>
 </body>
 </html>
