@@ -1,16 +1,16 @@
 # K-Day
 
 ## Affichage des tâches journalières
-<img src="img/readme/screen1.png"/>
+<img src="img/readme/screen1.PNG"/>
 
 ## Gestion des tâches
-<img src="img/readme/screen2.png"/>
+<img src="img/readme/screen2.PNG"/>
 
 ## Création de nouvelles tâches
-<img src="img/readme/screen3.png"/>
+<img src="img/readme/screen3.PNG"/>
 
 ## Validation des tâches
-<img src="img/readme/screen4.png"/>
+<img src="img/readme/screen4.PNG"/>
 
 ## Améliorations
 - Envoie de tâche par message.
