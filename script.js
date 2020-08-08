@@ -170,7 +170,7 @@ function show_task_manager(task) {
     
     container = document.createElement("div");
     label = document.createElement("p");
-    label.innerHTML = "Prochaine répétition";
+    label.innerHTML = "Début";
     data = document.createElement("p");
     data.innerHTML = String(task.begining) + " jour";
     data.setAttribute("class", "data_task");
