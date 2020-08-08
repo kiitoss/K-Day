@@ -172,10 +172,13 @@ function show_task_manager(task) {
     label = document.createElement("p");
     label.innerHTML = "Prochaine répétition";
     data = document.createElement("p");
-    data.innerHTML = String(task.begining) + " jour(s)";
+    data.innerHTML = String(task.begining) + " jour";
     data.setAttribute("class", "data_task");
     if (task.begining == 0) {
         data.innerHTML = "aujourd'hui";
+    }
+    else if (task.begining > 1) {
+        data.innerHTML += "s";
     }
 
     btn_container = document.createElement("div");
@@ -334,7 +337,8 @@ function validation_new_task() {
         new_task_frequency = 1;
     }
     else {
-        new_task_frequency = Number(text[text.split(" ").length - 1]);
+        text.split(" ");
+        new_task_frequency = Number(text[text.length - 1]);
     }
     text = document.getElementById("new_task_begining").innerHTML;
     let new_task_begining;
