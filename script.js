@@ -11,7 +11,6 @@ var max_date = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 // localStorage.clear();
 
-
 var task_list = JSON.parse(localStorage.getItem('task_list'));
 if (task_list == null) {
     task_list = [];
@@ -100,14 +99,10 @@ function show_task_to_do(task, delay) {
 
     new_task.style.animationDuration = delay+"s";
     new_task.style.animationName = "slidein";
-    // new_task.style.animationDuration = "1s";
-    // new_task.style.animationName = "slidein";
 
     new_task.appendChild(task_title);
     new_task.appendChild(task_button);
 
-    // new_task.style.animationDuration = delay+"s";
-    // new_task.style.animationName = "slidein";
     document.getElementById("task_list").appendChild(new_task);
 
     if (task.isDone) {
@@ -147,6 +142,10 @@ function show_task_manager(task) {
     data.innerHTML = "1 jour sur "+String(task.frequency);
     data.setAttribute("class", "data_task");
 
+    if (task.frequency == 1) {
+        data.innerHTML = "tous les jours";
+    }
+
     let btn_container = document.createElement("div");
     btn_container.setAttribute("class", "value_modifier");
     let btn_less = document.createElement("button");
@@ -171,10 +170,13 @@ function show_task_manager(task) {
     
     container = document.createElement("div");
     label = document.createElement("p");
-    label.innerHTML = "Commence dans";
+    label.innerHTML = "Prochaine répétition";
     data = document.createElement("p");
     data.innerHTML = String(task.begining) + " jour(s)";
     data.setAttribute("class", "data_task");
+    if (task.begining == 0) {
+        data.innerHTML = "aujourd'hui";
+    }
 
     btn_container = document.createElement("div");
     btn_container.setAttribute("class", "value_modifier");
@@ -200,26 +202,60 @@ function show_task_manager(task) {
 }
 
 function change_frequency_task(elt, qte, child_index, task=null) {
-    let text = elt.parentNode.parentNode.children[child_index].innerHTML.split(" ");
-    let new_frequency = Number(text.pop()) + qte;
+    let old_text = elt.parentNode.parentNode.children[child_index].innerHTML;
+    let old_frequency;
+    if (old_text == "tous les jours") {
+        old_frequency = 1;
+    }
+    else {
+        old_frequency = Number(old_text.split(" ").pop());
+    }
+
+    let new_frequency = old_frequency + qte;
     if (new_frequency < 1) {
         return;
     }
-    let new_text = text.join(" ") + " " + String(new_frequency);
+
+    let new_text;
+    if (new_frequency == 1) {
+        new_text = "tous les jours";
+    }
+    else {
+        new_text = "1 jour sur "+String(new_frequency);
+    }
     elt.parentNode.parentNode.children[child_index].innerHTML = new_text;
+
     if (task != null) {
         task.frequency = new_frequency;
     }
 }
 
 function change_begining_task(elt, qte, child_index, task=null) {
-    let text = elt.parentNode.parentNode.children[child_index].innerHTML.split(" ");
-    let new_begining = Number(text.shift()) + qte;
+    let old_text = elt.parentNode.parentNode.children[child_index].innerHTML;
+    let old_begining;
+    if (old_text == "aujourd'hui") {
+        old_begining = 0;
+    }
+    else {
+        old_begining = Number(old_text.split(" ").shift());
+    }
+    let new_begining = old_begining + qte;
     if (new_begining < 0) {
         return;
     }
-    let new_text = String(new_begining) + " " + text.join(" ");
+
+    if (new_begining == 0) {
+        new_text = "aujourd'hui";
+    }
+    else if (new_begining == 1) {
+        new_text = "1 jour";
+    }
+    else {
+        new_text = new_begining + " jours";
+    }
+
     elt.parentNode.parentNode.children[child_index].innerHTML = new_text;
+
     if (task != null) {
         task.begining = new_begining;
     }
@@ -242,14 +278,14 @@ function actualie_label_task_done() {
 function show_to_do_list() {
     document.getElementById("new_task").style.display = "none";
     document.getElementById("task_list").innerHTML = "";
+    let delay = 0;
     for (let i=0; i<task_list.length; i++) {
         if (!first_opening) {
             show_task_to_do(task_list[i], 0);
         }
         else {
-            let delay = i;
-            if (i>5) {
-                delay = 5;
+            if (task_list[i].begining == 0 && delay < 5) {
+                delay++;
             }
             show_task_to_do(task_list[i], delay);
         }
@@ -281,8 +317,8 @@ function show_task_list_manager() {
         document.getElementById("task_list").innerHTML = "";
         document.getElementById("new_task").style.display = "flex";
         document.getElementById("new_task_title").value = "";
-        document.getElementById("new_task_frequency").innerHTML = "1 jour sur 1";
-        document.getElementById("new_task_begining").innerHTML = "0 jour(s)";
+        document.getElementById("new_task_frequency").innerHTML = "tous les jours";
+        document.getElementById("new_task_begining").innerHTML = "aujourd'hui";
     }
 }
 
@@ -292,10 +328,22 @@ function validation_new_task() {
         alert("Vous devez rentrer un nom pour la nouvelle tâche.");
         return;
     }
-    let text = document.getElementById("new_task_frequency").innerHTML.split(" ");
-    let new_task_frequency = Number(text[text.length - 1]);
-    text = document.getElementById("new_task_begining").innerHTML.split(" ");
-    let new_task_begining = Number(text[0]);
+    let text = document.getElementById("new_task_frequency").innerHTML;
+    let new_task_frequency;
+    if (text == "tous les jours") {
+        new_task_frequency = 1;
+    }
+    else {
+        new_task_frequency = Number(text[text.split(" ").length - 1]);
+    }
+    text = document.getElementById("new_task_begining").innerHTML;
+    let new_task_begining;
+    if (text == "aujourd'hui") {
+        new_task_begining = 0;
+    }
+    else {
+        new_task_begining = Number(text.split(" ")[0])
+    }
     let new_task = new Task(new_task_title, new_task_frequency, new_task_begining);
     task_list.push(new_task);
     localStorage.setItem('task_list', JSON.stringify(task_list));
