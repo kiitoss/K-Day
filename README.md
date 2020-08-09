@@ -1,4 +1,5 @@
 # K-Day
+Lien PlayStore: https://play.google.com/store/apps/details?id=kiitoss.k.day
 
 ## Affichage des tâches journalières
 <img src="img/readme/screen1.PNG"/>
@@ -12,5 +13,5 @@
 ## Validation des tâches
 <img src="img/readme/screen4.PNG"/>
 
-## Améliorations
+## Améliorations possibles
 - Envoie de tâche par message.

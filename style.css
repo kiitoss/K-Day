@@ -7,6 +7,13 @@
     }
 }
 
+*.active.focus, *.active:focus,
+*.focus, *:active.focus, 
+*:active:focus, *:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -78,6 +85,7 @@ body {
 
 .task>p {
     width: 80vw;
+    overflow: hidden;
     margin: auto;
 }
 
@@ -120,6 +128,7 @@ body {
 
 .task_manager>p {
     flex: 2;
+    overflow: hidden;
     margin: auto;
 }
 
