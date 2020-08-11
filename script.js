@@ -1,9 +1,8 @@
-var actualDate = new Date();
-var day = actualDate.getDate();
-var month = actualDate.getMonth() + 1;
-var year = actualDate.getFullYear();
-var now_date = [Number(day), Number(month), Number(year)];
-now_date = JSON.parse(JSON.stringify(now_date));
+const actualDate = new Date();
+const day = actualDate.getDate();
+const month = actualDate.getMonth() + 1;
+const year = actualDate.getFullYear();
+const now_date = JSON.parse(JSON.stringify([Number(day), Number(month), Number(year)]));
 
 var first_opening = true;
 
@@ -18,7 +17,7 @@ if (task_list == null) {
 
 var old_date = JSON.parse(localStorage.getItem("old_date"));
 if (old_date == null) {
-    old_date = [Number(day), Number(month), Number(year)];
+    old_date = now_date;
     localStorage.setItem('old_date', JSON.stringify(old_date));
 }
 
@@ -65,6 +64,9 @@ function new_day(show=true) {
             task_list[i].begining += task_list[i].frequency;
         }
     }
+
+    localStorage.setItem('task_list', JSON.stringify(task_list));
+
     if (show) {
         show_to_do_list();
     }
@@ -94,7 +96,7 @@ function show_task_to_do(task, delay) {
             this.innerHTML = "x";
         }
         localStorage.setItem('task_list', JSON.stringify(task_list));
-        actualie_label_task_done();
+        actualise_label_task_done();
     }
 
     new_task.style.animationDuration = delay+"s";
@@ -264,7 +266,7 @@ function change_begining_task(elt, qte, child_index, task=null) {
     }
 }
 
-function actualie_label_task_done() {
+function actualise_label_task_done() {
     let task_done = 0;
     let task_total = 0;
     for (let i=0; i<task_list.length; i++) {
@@ -300,7 +302,7 @@ function show_to_do_list() {
         show_task_list_manager();
     }
     document.getElementById("btn_new_task").style.display = "none";
-    actualie_label_task_done();
+    actualise_label_task_done();
 }
 
 function show_task_list_manager() {
