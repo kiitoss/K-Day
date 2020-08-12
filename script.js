@@ -280,6 +280,29 @@ function actualise_label_task_done() {
     document.getElementById("nb_task_done").textContent = task_done+"/"+task_total;
 }
 
+function sort_task_list() {
+    let cp_task_list = [];
+    for (let i=0; i<task_list.length; i++) {
+        cp_task_list.push(task_list[i]);
+    }
+
+    let sorted_task_list = [];
+
+    while (cp_task_list.length > 0) {
+        let min = null;
+        let index = 0;
+        for (let i=0; i<cp_task_list.length; i++) {
+            if (min == null || cp_task_list[i].begining < min) {
+                min = cp_task_list[i].begining;
+                index = i;
+            }
+        }
+        sorted_task_list.push(cp_task_list[index]);
+        cp_task_list.splice(index, 1);
+    }
+    return sorted_task_list;
+}
+
 function show_to_do_list() {
     document.getElementById("new_task").style.display = "none";
     document.getElementById("task_list").innerHTML = "";
@@ -307,8 +330,9 @@ function show_to_do_list() {
 
 function show_task_list_manager() {
     document.getElementById("task_list").innerHTML = "";
-    for (let i=0; i<task_list.length; i++) {
-        show_task_manager(task_list[i]);
+    let sorted_task_list = sort_task_list();
+    for (let i=0; i<sorted_task_list.length; i++) {
+        show_task_manager(sorted_task_list[i]);
     }
 
     document.getElementById("nb_task_done").style.display = "none";
